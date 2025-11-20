@@ -1,5 +1,7 @@
 #!/bin/bash
+# all commands here were imported from the ubuntu documentation
 
+#  Install Dependencies PHP and apache 
 sudo apt update
 sudo apt install -y apache2 \
                  ghostscript \
@@ -16,16 +18,13 @@ sudo apt install -y apache2 \
                  php-xml \
                  php-zip
 
-# Create web root and set permissions
+# install wordpress
 sudo mkdir -p /srv/www
 sudo chown -R www-data:www-data /srv/www
 
-# Download and extract WordPress
 curl -fsSL https://wordpress.org/latest.tar.gz | sudo -u www-data tar zx -C /srv/www
 
-# WordPress should now be: /srv/www/wordpress
-
-# Create Apache site config
+# Configure Apache for WordPress
 sudo tee /etc/apache2/sites-available/wordpress.conf > /dev/null << 'EOF'
 <VirtualHost *:80>
     DocumentRoot /srv/www/wordpress
@@ -50,7 +49,7 @@ sudo a2dissite 000-default
 sudo systemctl reload apache2
 
 sudo service apache2 reload
-
+# Configure database
 sudo mysql -u root <<EOF 
 
 CREATE DATABASE wordpress;
@@ -68,12 +67,14 @@ EOF
 
 sudo service mysql start
 
+# Configure WordPress to connect to the database
 sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
 
 sudo -u www-data sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
 sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
 sudo -u www-data sed -i 's/password_here/wordpass/' /srv/www/wordpress/wp-config.php
 
+#in the php file there are API keys that need replacing 
 sudo sed -i "/^define( 'AUTH_KEY'/c\define( 'AUTH_KEY',         '#GG9y}4w^u-2k!_j|h}kn3Oi?catiDGD-i({n%K[o*a<T%U@yLIMu{W-[@Oajz?{' );" /srv/www/wordpress/wp-config.php
 sudo sed -i "/^define( 'SECURE_AUTH_KEY'/c\define( 'SECURE_AUTH_KEY',  ' B92,[+:KJk9lI/{jBkMDQZ8@4m;o^vNI-X+X^3u=wAsS,?%.D3<IEXc} aqsjQ=' );" /srv/www/wordpress/wp-config.php
 sudo sed -i "/^define( 'LOGGED_IN_KEY'/c\define( 'LOGGED_IN_KEY',    'qo+8>ov5$kzkD2MJo.r?Q<rY_P:l3KM!a^ /q/P1#42-?zN\`xW*J3M_|vhj>#+n ' );" /srv/www/wordpress/wp-config.php
