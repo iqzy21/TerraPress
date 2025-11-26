@@ -8,12 +8,11 @@ resource "aws_instance" "wordpress" {
 
   key_name = "wordpress"
 
-  vpc_security_group_ids = [ aws_security_group.wordpress.id ]
-  subnet_id = aws_subnet.wordpress.id
+  vpc_security_group_ids = [ var.WP_security_id ]
+  subnet_id = var.WP_subnet_id
 
   associate_public_ip_address = true
 
-  user_data = file("user_data.sh")
-
+  user_data = file("cloud-init.sh")
 
 }
