@@ -15,6 +15,10 @@ TerraPress uses Terraform to create:
 - EC2 instance running WordPress
 - Cloud-init script that automates all WordPress and database setup
 
+## Architecture diagram
+![TERRAPRESS](https://github.com/user-attachments/assets/bf5e454c-6fbb-473f-bf21-ccdb553117b2)
+
+
 ## Project Tree
 ```
 .
